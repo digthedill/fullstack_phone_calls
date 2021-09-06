@@ -10,7 +10,6 @@ import { auth } from "./config/firebase"
 
 const App = () => {
   const [user, loading] = useAuthState(auth)
-  console.log(user)
 
   if (loading) {
     return <Loading />
