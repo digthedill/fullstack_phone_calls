@@ -24,7 +24,6 @@ const Header = ({ user }) => {
 }
 
 const Container = styled.header`
-  background: #e3f2fd;
   padding: 2rem;
   border-bottom: 2px solid #0d47a1;
 `
