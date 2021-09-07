@@ -125,7 +125,7 @@ const PayAndCall = ({
           type="submit"
           disabled={!stripe || isProccessing}
         >
-          Pay 50¢
+          Pay 50¢ and Call
         </Button>
       </form>
     </Container>
