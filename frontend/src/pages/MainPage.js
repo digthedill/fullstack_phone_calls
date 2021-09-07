@@ -47,7 +47,6 @@ const MainPage = () => {
                 phoneNumber={initiatePay.contact.contactNumber}
                 canclePay={setInitiatePay}
                 setPaymentSuccess={setPaymentSuccess}
-                callComplete={callComplete}
                 setCallComplete={setCallComplete}
               />
             </div>

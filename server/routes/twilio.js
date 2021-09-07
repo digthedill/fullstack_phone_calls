@@ -2,9 +2,13 @@ const express = require("express")
 const router = express.Router()
 const makeCall = require("../make_call")
 
-// opportunity to verify the user
 router.post("/call", async (req, res) => {
   const recipient = req.body.cell_number
+  const uid = req.body.uid
+  if (!uid) {
+    // prevent unauthorized calls (need to connect to firebase auth)
+    return res.status(400).send({ message: "You are not authorized to call" })
+  }
   try {
     const call = await makeCall(recipient)
     if (call.sid) {

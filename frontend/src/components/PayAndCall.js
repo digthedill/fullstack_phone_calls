@@ -13,7 +13,6 @@ const PayAndCall = ({
   setPaymentSuccess,
   phoneNumber,
   paymentSuccess,
-  callComplete,
   setCallComplete,
 }) => {
   const [user] = useAuthState(auth)
@@ -40,36 +39,43 @@ const PayAndCall = ({
   const handleSubmit = async (event) => {
     event.preventDefault()
     setProccessing(true)
+    // if it didn't load exit function
     if (!stripe || !elements) {
       return
     }
+    // get card details from stripe element componenet
     const card = elements.getElement(CardElement)
     const payload = await stripe.createPaymentMethod({
       type: "card",
       card,
     })
+
+    // begin payment authorization
     try {
+      // get secret from backend
       const { data: clientSecret } = await axios.post(
-        "http://localhost:4000/create-payment-intent",
+        "/create-payment-intent",
         {
           payload,
         }
       )
-
+      // confirmation from stripe
       const confirmCardPayment = await stripe.confirmCardPayment(
         clientSecret.clientSecret,
         {
           payment_method: payload.paymentMethod.id,
         }
       )
+      // handle card decline errors
       if (confirmCardPayment.error) {
         setCardError(`Card error: ${confirmCardPayment.error.decline_code}`)
       }
+      // proceed with successful payment
       if (confirmCardPayment.paymentIntent.status === "succeeded") {
         setPaymentSuccess(true)
         await makeTwilioCall()
       }
-      setProccessing(false)
+      setProccessing(false) //reset the card element
     } catch (err) {
       setPaymentSuccess(false)
       setCardError("Please enter a valid card number")
@@ -80,13 +86,15 @@ const PayAndCall = ({
 
   const makeTwilioCall = async () => {
     setCalling(true)
+    // make call to server with recipient phone number
     try {
       axios
-        .post("http://localhost:4000/call", {
+        .post("/call", {
           cell_number: phoneNumber,
           uid: user.uid,
         })
         .then((res) => {
+          // successful call to phone number
           if (res.data.callId) {
             setCallComplete(true)
             setCalling(false)
@@ -97,11 +105,12 @@ const PayAndCall = ({
           setCallError("Invalid phone number")
         })
     } catch (err) {
+      // extra error catching
       console.log(err.message)
       setCallError("Invalid phone number")
     }
   }
-
+  // payment success toggles credit card view and attempting call view
   return !paymentSuccess ? (
     <Container>
       {cardError && (
@@ -111,7 +120,6 @@ const PayAndCall = ({
       )}
       <form onSubmit={handleSubmit}>
         <CardElement options={options} />
-
         <Button
           variant="outlined"
           type="submit"
@@ -124,7 +132,7 @@ const PayAndCall = ({
   ) : (
     <Container>
       {calling && !callError ? (
-        <Typography>"Placing Call. . . "</Typography>
+        <Typography variant="h4">"Placing Call. . . "</Typography>
       ) : null}
       {callError && (
         <Typography variant="caption" color="secondary">
