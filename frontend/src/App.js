@@ -9,10 +9,13 @@ import IndexPage from "./pages/IndexPage"
 import { auth } from "./config/firebase"
 
 const App = () => {
-  const [user, loading] = useAuthState(auth)
+  const [user, loading, error] = useAuthState(auth)
 
   if (loading) {
     return <Loading />
+  }
+  if (error) {
+    return <IndexPage />
   }
   return (
     <Container>

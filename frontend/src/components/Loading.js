@@ -21,8 +21,14 @@ const Container = styled.div`
   height: 100%;
   left: 0;
   right: 0;
-
   margin: 0 auto;
+  background: rgb(255, 253, 231);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 253, 231, 1) 35%,
+    rgba(129, 212, 250, 1) 100%
+  );
+  color: #333;
 
   div {
     width: 100%;
