@@ -18,4 +18,4 @@ const makeCall = async (recipient) => {
   }
 }
 
-module.exports = { makeCall }
+module.exports = makeCall

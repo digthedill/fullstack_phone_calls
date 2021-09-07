@@ -1,21 +1,38 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Grid } from "@material-ui/core"
 import styled from "styled-components"
 
 import ContactList from "../components/Contacts/ContactList"
 import CreateContact from "../components/Contacts/CreateContact"
-import Checkout from "../components/Checkout"
+import PayAndCall from "../components/PayAndCall"
 import CallerInfo from "../components/CallerInfo"
+import SuccessOverlay from "../components/SuccessOverlay"
 
 const MainPage = () => {
+  const [callComplete, setCallComplete] = useState(false)
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [initiatePay, setInitiatePay] = useState({
     start: false,
     contact: null,
   })
+  // reset the payment method for each phone call
+  useEffect(() => {
+    setPaymentSuccess(false)
+  }, [initiatePay.contact])
+
+  useEffect(() => {
+    setPaymentSuccess(false)
+    setInitiatePay({
+      start: false,
+      contact: null,
+    })
+  }, [callComplete])
 
   return (
     <Container>
+      {callComplete && (
+        <SuccessOverlay show={callComplete} setShow={setCallComplete} />
+      )}
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={4}>
           {initiatePay.start ? (
@@ -25,14 +42,14 @@ const MainPage = () => {
                 paymentSuccess={paymentSuccess}
                 contactName={initiatePay.contact.contactName}
               />
-              {paymentSuccess ? (
-                <p>Call the person</p>
-              ) : (
-                <Checkout
-                  canclePay={setInitiatePay}
-                  setPaymentSuccess={setPaymentSuccess}
-                />
-              )}
+              <PayAndCall
+                paymentSuccess={paymentSuccess}
+                phoneNumber={initiatePay.contact.contactNumber}
+                canclePay={setInitiatePay}
+                setPaymentSuccess={setPaymentSuccess}
+                callComplete={callComplete}
+                setCallComplete={setCallComplete}
+              />
             </div>
           ) : (
             <CreateContact />

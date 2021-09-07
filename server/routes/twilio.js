@@ -1,6 +1,8 @@
 const express = require("express")
 const router = express.Router()
+const makeCall = require("../make_call")
 
+// opportunity to verify the user
 router.post("/call", async (req, res) => {
   const recipient = req.body.cell_number
   try {

@@ -25,8 +25,9 @@ const ContactList = ({ initPay }) => {
         })
     }
     getUserContacts()
-    // clean up return
-    return getUserContacts
+    // unsubsribe to listener
+    return () =>
+      db.collection("contacts").where("uid", "==", user.uid).onSnapshot()
   }, [user.uid])
 
   return (
