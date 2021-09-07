@@ -1,7 +1,10 @@
+import axios from "axios"
+import { useState } from "react"
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js"
-import { Button, Typography } from "@material-ui/core"
+import { Button } from "@material-ui/core"
 import styled from "styled-components"
 const CardForm = () => {
+  const [isProccessing, setProccessing] = useState(false)
   const stripe = useStripe()
   const elements = useElements()
 
@@ -26,21 +29,33 @@ const CardForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-
+    setProccessing(true)
     if (!stripe || !elements) {
-      // Stripe.js has not loaded yet. Make sure to disable
-      // form submission until Stripe.js has loaded.
       return
     }
-
     const payload = await stripe.createPaymentMethod({
       type: "card",
       card: elements.getElement(CardElement),
     })
 
-    console.log("[PaymentMethod]", payload)
-
-    // this is where I send the payload to stripe node server
+    const { data: clientSecret } = await axios.post(
+      "http://localhost:4000/create-payment-intent",
+      {
+        payload,
+      }
+    )
+    if (clientSecret) {
+      setProccessing(false)
+      console.log(clientSecret)
+    }
+    const confirmCardPayment = await stripe.confirmCardPayment(
+      clientSecret.clientSecret,
+      {
+        payment_method: payload.paymentMethod.id,
+      }
+    )
+    // now need to begin the twilio call
+    console.log(confirmCardPayment)
   }
 
   return (
@@ -48,8 +63,12 @@ const CardForm = () => {
       <form onSubmit={handleSubmit}>
         <CardElement options={options} />
 
-        <Button variant="outlined" type="submit" disabled={!stripe}>
-          Pay 25¢
+        <Button
+          variant="outlined"
+          type="submit"
+          disabled={!stripe || isProccessing}
+        >
+          Pay 50¢
         </Button>
       </form>
     </Container>
