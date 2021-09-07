@@ -1,11 +1,11 @@
-import { Typography, Button } from "@material-ui/core"
+import { Typography, IconButton } from "@material-ui/core"
 import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline"
 import PhoneIcon from "@material-ui/icons/Phone"
 import styled from "styled-components"
 
 import { formatFromDatabase } from "../../utils/formatPhoneNumber"
 
-const ContactElement = ({ contact, db, initCall }) => {
+const ContactElement = ({ contact, db, initPay }) => {
   const handleDelete = () => {
     if (window.confirm("Are you sure you want to delete your contact?")) {
       db.collection("contacts")
@@ -17,13 +17,21 @@ const ContactElement = ({ contact, db, initCall }) => {
   }
 
   const handleCall = () => {
-    initCall(true)
+    initPay({
+      start: true,
+      contact: contact,
+    })
   }
   return (
     <Wrapper>
-      <Button color="secondary" className="trash-logo" onClick={handleDelete}>
-        <DeleteOutlineIcon />
-      </Button>
+      <IconButton
+        color="secondary"
+        className="trash-logo"
+        onClick={handleDelete}
+        size="small"
+      >
+        <DeleteOutlineIcon size="small" />
+      </IconButton>
 
       <Container>
         <div className="contact-info">
@@ -35,9 +43,9 @@ const ContactElement = ({ contact, db, initCall }) => {
           </Typography>
         </div>
         <div className="contact-action">
-          <Button color="primary" onClick={handleCall}>
+          <IconButton color="primary" onClick={handleCall}>
             <PhoneIcon />
-          </Button>
+          </IconButton>
         </div>
       </Container>
     </Wrapper>

@@ -1,31 +1,43 @@
 import axios from "axios"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js"
-import { Button } from "@material-ui/core"
+import { Button, Typography } from "@material-ui/core"
 import styled from "styled-components"
-const CardForm = () => {
+
+const options = {
+  style: {
+    base: {
+      fontSize: "16px",
+      color: "#424770",
+      letterSpacing: "0.05em",
+      "::placeholder": {
+        color: "#757575",
+      },
+    },
+    invalid: {
+      color: "#9e2146",
+    },
+    complete: {
+      color: "#4caf50",
+    },
+  },
+}
+
+const CardForm = ({ setPaymentSuccess }) => {
   const [isProccessing, setProccessing] = useState(false)
+  const [error, setError] = useState(null)
   const stripe = useStripe()
   const elements = useElements()
 
-  const options = {
-    style: {
-      base: {
-        fontSize: "16px",
-        color: "#424770",
-        letterSpacing: "0.05em",
-        "::placeholder": {
-          color: "#757575",
-        },
-      },
-      invalid: {
-        color: "#9e2146",
-      },
-      complete: {
-        color: "#4caf50",
-      },
-    },
-  }
+  useEffect(() => {
+    const subscribe = setTimeout(() => {
+      if (error) {
+        setError("")
+      }
+    }, 5000)
+
+    return subscribe
+  }, [setError, error])
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -33,33 +45,46 @@ const CardForm = () => {
     if (!stripe || !elements) {
       return
     }
+    const card = elements.getElement(CardElement)
     const payload = await stripe.createPaymentMethod({
       type: "card",
-      card: elements.getElement(CardElement),
+      card,
     })
 
-    const { data: clientSecret } = await axios.post(
-      "http://localhost:4000/create-payment-intent",
-      {
-        payload,
+    try {
+      const { data: clientSecret } = await axios.post(
+        "http://localhost:4000/create-payment-intent",
+        {
+          payload,
+        }
+      )
+
+      const confirmCardPayment = await stripe.confirmCardPayment(
+        clientSecret.clientSecret,
+        {
+          payment_method: payload.paymentMethod.id,
+        }
+      )
+      if (confirmCardPayment.error) {
+        setError(`Card error: ${confirmCardPayment.error.decline_code}`)
       }
-    )
-    if (clientSecret) {
+      if (confirmCardPayment.paymentIntent.status === "succeeded") {
+        setPaymentSuccess(true)
+      }
+
       setProccessing(false)
-      console.log(clientSecret)
+    } catch (err) {
+      setError("Please enter a valid card number")
     }
-    const confirmCardPayment = await stripe.confirmCardPayment(
-      clientSecret.clientSecret,
-      {
-        payment_method: payload.paymentMethod.id,
-      }
-    )
-    // now need to begin the twilio call
-    console.log(confirmCardPayment)
   }
 
   return (
     <Container>
+      {error && (
+        <Typography variant="caption" color="secondary">
+          {error}
+        </Typography>
+      )}
       <form onSubmit={handleSubmit}>
         <CardElement options={options} />
 

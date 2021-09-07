@@ -5,23 +5,28 @@ import { useAuthState } from "react-firebase-hooks/auth"
 import { db, auth } from "../../config/firebase"
 import { Typography } from "@material-ui/core"
 
-const ContactList = ({ initCall }) => {
+const ContactList = ({ initPay }) => {
   const [user] = useAuthState(auth)
   const [contacts, setContacts] = useState([])
 
   useEffect(() => {
-    db.collection("contacts")
-      .where("uid", "==", user.uid)
-      .onSnapshot((querySnapshot) => {
-        setContacts([])
-        querySnapshot.forEach((doc) => {
-          const _contact = {
-            docId: doc.id,
-            ...doc.data(),
-          }
-          setContacts((prev) => [...prev, _contact])
+    const getUserContacts = async () => {
+      db.collection("contacts")
+        .where("uid", "==", user.uid)
+        .onSnapshot((querySnapshot) => {
+          setContacts([])
+          querySnapshot.forEach((doc) => {
+            const _contact = {
+              docId: doc.id,
+              ...doc.data(),
+            }
+            setContacts((prev) => [...prev, _contact])
+          })
         })
-      })
+    }
+    getUserContacts()
+    // clean up return
+    return getUserContacts
   }, [user.uid])
 
   return (
@@ -35,7 +40,7 @@ const ContactList = ({ initCall }) => {
                   key={contact.id}
                   contact={contact}
                   db={db}
-                  initCall={initCall}
+                  initPay={initPay}
                 />
               )
             })
