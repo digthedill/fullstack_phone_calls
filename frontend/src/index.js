@@ -9,7 +9,6 @@ import { loadStripe } from "@stripe/stripe-js"
 dotenv.config()
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PK)
-console.log(process.env.REACT_APP_STRIPE_PK)
 
 ReactDOM.render(
   <React.StrictMode>

@@ -24,7 +24,7 @@ const Header = ({ user }) => {
 }
 
 const Container = styled.header`
-  padding: 2rem;
+  padding: 2rem 0;
   border-bottom: 2px solid #0d47a1;
 `
 export default Header

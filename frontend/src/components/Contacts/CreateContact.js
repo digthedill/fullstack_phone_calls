@@ -1,42 +1,76 @@
 import { useState } from "react"
 import { Button, TextField } from "@material-ui/core"
 import MuiPhoneNumber from "material-ui-phone-number"
+import styled from "styled-components"
+import { useAuthState } from "react-firebase-hooks/auth"
+import { formatToDatabase } from "../../utils/formatPhoneNumber"
+import { v4 as uuidv4 } from "uuid"
 
-import React from "react"
+import { db, auth } from "../../config/firebase"
 
 const CreateContact = () => {
+  const [user] = useAuthState(auth)
+  // break name into first_name & last_name
   const [contactName, setContactName] = useState("")
   const [contactNumber, setContactNumber] = useState("")
 
   const createNewContact = (e) => {
     e.preventDefault()
-    // format number here
-    console.log({
+
+    const payload = {
+      id: uuidv4(),
+      uid: user.uid,
       contactName,
-      contactNumber,
-    })
+      contactNumber: formatToDatabase(contactNumber),
+    }
+
     // send to database
+    db.collection("contacts")
+      .add(payload)
+      .then((docRef) => {
+        console.log(`${docRef.id} Doc successfully written!`)
+        setContactName("")
+        setContactNumber("")
+      })
+      .catch((error) => {
+        console.error("Error writing document: ", error)
+      })
   }
 
   return (
-    <form onSubmit={createNewContact}>
+    <FormContainer onSubmit={createNewContact}>
       <TextField
         id="contact-name"
         label="New Contact"
         value={contactName}
+        required
         onChange={(e) => setContactName(e.target.value)}
       />
       <MuiPhoneNumber
-        label="Phone Number"
         value={contactNumber}
         onChange={(e) => setContactNumber(e)}
         defaultCountry={"us"}
+        required
+        placeholder="3128675319"
       />
       <Button type="submit" variant="outlined">
-        +
+        Add to Contacts
       </Button>
-    </form>
+    </FormContainer>
   )
 }
+
+const FormContainer = styled.form`
+  display: flex;
+  flex-direction: column;
+
+  input {
+    margin: 0.8rem 0;
+  }
+  button {
+    margin: 0.8rem 0;
+    width: min-content;
+  }
+`
 
 export default CreateContact

@@ -8,16 +8,18 @@ const CardForm = () => {
   const options = {
     style: {
       base: {
-        fontSize: "18px",
+        fontSize: "16px",
         color: "#424770",
         letterSpacing: "0.05em",
-        fontFamily: "Source Code Pro, monospace",
         "::placeholder": {
-          color: "#aab7c4",
+          color: "#757575",
         },
       },
       invalid: {
         color: "#9e2146",
+      },
+      complete: {
+        color: "#4caf50",
       },
     },
   }
@@ -44,27 +46,10 @@ const CardForm = () => {
   return (
     <Container>
       <form onSubmit={handleSubmit}>
-        <label>
-          <Typography variant="p">Card details</Typography>
-          <CardElement
-            options={options}
-            onReady={() => {
-              console.log("CardElement [ready]")
-            }}
-            onChange={(event) => {
-              console.log("CardElement [change]", event)
-            }}
-            onBlur={() => {
-              console.log("CardElement [blur]")
-            }}
-            onFocus={() => {
-              console.log("CardElement [focus]")
-            }}
-          />
-        </label>
+        <CardElement options={options} />
 
         <Button variant="outlined" type="submit" disabled={!stripe}>
-          Pay
+          Pay 25¢
         </Button>
       </form>
     </Container>
@@ -72,7 +57,13 @@ const CardForm = () => {
 }
 
 const Container = styled.div`
-  max-width: 600px;
+  margin-top: 1rem;
+  form {
+    button {
+      width: 100%;
+      margin-top: 1rem;
+    }
+  }
 `
 
 export default CardForm
