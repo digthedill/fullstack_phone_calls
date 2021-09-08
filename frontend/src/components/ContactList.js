@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import ContactElement from "./ContactElement"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { db, auth } from "../../config/firebase"
 import { Typography } from "@material-ui/core"
+
+import ContactElement from "./ContactElement"
+import { db, auth } from "../config/firebase"
 
 const ContactList = ({ initPay }) => {
   const [user] = useAuthState(auth)

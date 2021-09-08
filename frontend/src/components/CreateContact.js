@@ -1,12 +1,12 @@
 import { useState } from "react"
 import { Button, TextField } from "@material-ui/core"
 import MuiPhoneNumber from "material-ui-phone-number"
+import { v4 as uuidv4 } from "uuid"
 import styled from "styled-components"
 import { useAuthState } from "react-firebase-hooks/auth"
-import { formatToDatabase } from "../../utils/formatPhoneNumber"
-import { v4 as uuidv4 } from "uuid"
 
-import { db, auth } from "../../config/firebase"
+import { formatToDatabase } from "../utils/formatPhoneNumber"
+import { db, auth } from "../config/firebase"
 
 const CreateContact = () => {
   const [user] = useAuthState(auth)

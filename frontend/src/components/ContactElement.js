@@ -3,7 +3,7 @@ import DeleteOutlineIcon from "@material-ui/icons/DeleteOutline"
 import PhoneIcon from "@material-ui/icons/Phone"
 import styled from "styled-components"
 
-import { formatFromDatabase } from "../../utils/formatPhoneNumber"
+import { formatFromDatabase } from "../utils/formatPhoneNumber"
 
 const ContactElement = ({ contact, db, initPay }) => {
   const handleDelete = () => {
