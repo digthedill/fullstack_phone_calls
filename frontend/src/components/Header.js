@@ -12,7 +12,9 @@ const Header = ({ user }) => {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Typography variant="h2">Phone A Friend</Typography>
+        <Typography variant="h2" className="header-title">
+          Phone A Friend
+        </Typography>
         {user && (
           <div className="user-and-logout">
             <div className="username-and-icon">
@@ -32,6 +34,12 @@ const Header = ({ user }) => {
 const Container = styled.header`
   padding: 2rem 0;
   border-bottom: 2px solid #0d47a1;
+
+  @media (max-width: 550px) {
+    .header-title {
+      font-size: 2rem;
+    }
+  }
 
   .user-and-logout {
     display: flex;

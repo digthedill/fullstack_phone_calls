@@ -6,7 +6,9 @@ import SignUpForm from "../components/SignUpForm"
 const IndexPage = () => {
   return (
     <Container>
-      <Typography variant="h4">Join The Communication</Typography>
+      <Typography variant="h4" className="index-title">
+        Join The Communication
+      </Typography>
       <Typography variant="caption">
         At this time we can only call U.S. numbers
       </Typography>
@@ -25,6 +27,12 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   text-align: center;
+
+  @media (max-width: 550px) {
+    .index-title {
+      font-size: 1.7rem;
+    }
+  }
 
   img {
     max-width: 250px;
