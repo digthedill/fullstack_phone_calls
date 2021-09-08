@@ -1,4 +1,4 @@
-### Fullstack Outbound Calls
+## Fullstack Outbound Calls
 
 #### Frontend
 
@@ -14,9 +14,8 @@ Setup some pretty basic express endpoints connecting to the 3rd party APIs. Not 
 
 #### Other
 
-Sorry for the lengthy PayAndCall compoenent. I'd normally split something with that much logic up, but I don't have time. I tried to annotate throughout with commenets.
+Sorry for the lengthy PayAndCall component. I split the lengthy api calls into seperate files so it might be easier to read.
 
-One of the shortcomings I can think of is sorting the contact list from Firestore. I know there is a way to track the index and sort, but I haven't gotten around to that yet. Maybe I'll have a chance later.
+One of the shortcomings I can think of is sorting the contact list from Firestore. I tried to query by a firestore timestamp and by the name query. The issue was that it wasn't working in real time with firestore's onSnapshot function.
 
-- need to:
-  - authenticate user with firbase in the backend
+Would have liked to authenticate user with firbase in the backend using the admin sdk.
