@@ -6,6 +6,7 @@ import { useAuthState } from "react-firebase-hooks/auth"
 
 import { formatToDatabase } from "../utils/formatPhoneNumber"
 import { db, auth } from "../config/firebase"
+import firebase from "firebase"
 
 const CreateContact = () => {
   const [user] = useAuthState(auth)
@@ -19,13 +20,14 @@ const CreateContact = () => {
       uid: user.uid,
       contactName,
       contactNumber: formatToDatabase(contactNumber),
+      createdAt: firebase.firestore.Timestamp.now(),
     }
 
     // send to database
     db.collection("contacts")
       .add(payload)
-      .then((docRef) => {
-        console.log(`${docRef.id} Doc successfully written!`)
+      .then(() => {
+        //use docRef as a var to get the doc id
         setContactName("")
         setContactNumber("")
       })
