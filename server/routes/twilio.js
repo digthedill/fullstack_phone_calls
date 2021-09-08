@@ -11,13 +11,16 @@ router.post("/call", async (req, res) => {
   }
   try {
     const call = await makeCall(recipient)
+    if (!call) {
+      return res
+        .status(400)
+        .send({ message: "Unverified phone number. Enter a real phone number" })
+    }
     if (call.sid) {
       res.status(200).send({ message: "call completed", callId: call.sid })
-    } else {
-      throw new Error("Couldnt complete call")
     }
   } catch (e) {
-    console.log(e)
+    console.log(e.message)
     res.status(400).send(e)
   }
 })
