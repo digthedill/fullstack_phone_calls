@@ -1,4 +1,3 @@
-import axios from "axios"
 import { useState, useEffect } from "react"
 import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js"
 import { Button, Typography } from "@material-ui/core"
@@ -8,6 +7,10 @@ import options from "../utils/stripeEleOptions"
 
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "../config/firebase"
+
+// bloated api calls
+import makeTwilioCall from "../utils/makeTwilioCall"
+import handlePayment from "../utils/handlePayment"
 
 const PayAndCall = ({
   setPaymentSuccess,
@@ -36,80 +39,6 @@ const PayAndCall = ({
     return () => subscribe
   }, [setCardError, cardError])
 
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    setProccessing(true)
-    // if it didn't load exit function
-    if (!stripe || !elements) {
-      return
-    }
-    // get card details from stripe element componenet
-    const card = elements.getElement(CardElement)
-    const payload = await stripe.createPaymentMethod({
-      type: "card",
-      card,
-    })
-
-    // begin payment authorization
-    try {
-      // get secret from backend
-      const { data: clientSecret } = await axios.post(
-        "/create-payment-intent",
-        {
-          payload,
-        }
-      )
-      // confirmation from stripe
-      const confirmCardPayment = await stripe.confirmCardPayment(
-        clientSecret.clientSecret,
-        {
-          payment_method: payload.paymentMethod.id,
-        }
-      )
-      // handle card decline errors
-      if (confirmCardPayment.error) {
-        setCardError(`Card error: ${confirmCardPayment.error.decline_code}`)
-      }
-      // proceed with successful payment
-      if (confirmCardPayment.paymentIntent.status === "succeeded") {
-        setPaymentSuccess(true)
-        await makeTwilioCall()
-      }
-      setProccessing(false) //reset the card element
-    } catch (err) {
-      setPaymentSuccess(false)
-      setCardError("Please enter a valid card number")
-      setProccessing(false)
-      setCallError(null)
-    }
-  }
-
-  const makeTwilioCall = async () => {
-    setCalling(true)
-    // make call to server with recipient phone number
-    try {
-      axios
-        .post("/call", {
-          cell_number: phoneNumber,
-          uid: user.uid,
-        })
-        .then((res) => {
-          // successful call to phone number
-          if (res.data.callId) {
-            setCallComplete(true)
-            setCalling(false)
-          }
-        })
-        .catch((err) => {
-          console.log(err.message)
-          setCallError("Invalid phone number")
-        })
-    } catch (err) {
-      // extra error catching
-      console.log(err.message)
-      setCallError("Invalid phone number")
-    }
-  }
   // payment success toggles credit card view and attempting call view
   return !paymentSuccess ? (
     <Container>
@@ -118,7 +47,25 @@ const PayAndCall = ({
           {cardError}
         </Typography>
       )}
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={(event) =>
+          handlePayment(
+            event,
+            setProccessing,
+            stripe,
+            elements,
+            CardElement,
+            setCardError,
+            setPaymentSuccess,
+            makeTwilioCall,
+            setCalling,
+            phoneNumber,
+            user,
+            setCallComplete,
+            setCallError
+          )
+        }
+      >
         <CardElement options={options} />
         <Button
           variant="outlined"

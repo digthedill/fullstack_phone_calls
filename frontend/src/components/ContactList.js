@@ -13,7 +13,7 @@ const ContactList = ({ initPay }) => {
   useEffect(() => {
     const getUserContacts = async () => {
       db.collection("contacts")
-        // .orderBy("createdAt", "desc") //not working in real time
+        //.orderBy("contactName") //not working in real time
         .where("uid", "==", user.uid)
         .onSnapshot((querySnapshot) => {
           setContacts([])
