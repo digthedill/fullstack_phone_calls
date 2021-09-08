@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { Button, TextField } from "@material-ui/core"
 import MuiPhoneNumber from "material-ui-phone-number"
-import { v4 as uuidv4 } from "uuid"
 import styled from "styled-components"
 import { useAuthState } from "react-firebase-hooks/auth"
 
@@ -10,7 +9,6 @@ import { db, auth } from "../config/firebase"
 
 const CreateContact = () => {
   const [user] = useAuthState(auth)
-  // break name into first_name & last_name
   const [contactName, setContactName] = useState("")
   const [contactNumber, setContactNumber] = useState("")
 
@@ -18,7 +16,6 @@ const CreateContact = () => {
     e.preventDefault()
 
     const payload = {
-      id: uuidv4(),
       uid: user.uid,
       contactName,
       contactNumber: formatToDatabase(contactNumber),
