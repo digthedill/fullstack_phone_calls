@@ -1,12 +1,13 @@
 import { useState } from "react"
+import firebase from "firebase"
+import { useAuthState } from "react-firebase-hooks/auth"
+
 import { Button, TextField } from "@material-ui/core"
 import MuiPhoneNumber from "material-ui-phone-number"
 import styled from "styled-components"
-import { useAuthState } from "react-firebase-hooks/auth"
 
 import { formatToDatabase } from "../utils/formatPhoneNumber"
 import { db, auth } from "../config/firebase"
-import firebase from "firebase"
 
 const CreateContact = () => {
   const [user] = useAuthState(auth)
@@ -15,15 +16,12 @@ const CreateContact = () => {
 
   const createNewContact = (e) => {
     e.preventDefault()
-
     const payload = {
       uid: user.uid,
       contactName,
       contactNumber: formatToDatabase(contactNumber),
       createdAt: firebase.firestore.Timestamp.now(),
     }
-
-    // send to database
     db.collection("contacts")
       .add(payload)
       .then(() => {
@@ -50,7 +48,6 @@ const CreateContact = () => {
         onChange={(e) => setContactNumber(e)}
         defaultCountry={"us"}
         required
-        placeholder="3128675319"
       />
       <Button type="submit" variant="outlined">
         Add to Contacts

@@ -13,13 +13,13 @@ const MainPage = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false)
   const [initiatePay, setInitiatePay] = useState({
     start: false,
-    contact: null,
+    contact: null, //contact object
   })
-  // reset the payment method for each phone call
+  // reset the payment view for each phone call
   useEffect(() => {
     setPaymentSuccess(false)
   }, [initiatePay.contact])
-
+  // reset views after successful payment
   useEffect(() => {
     setPaymentSuccess(false)
     setInitiatePay({
@@ -33,6 +33,7 @@ const MainPage = () => {
       {callComplete && (
         <SuccessOverlay show={callComplete} setShow={setCallComplete} />
       )}
+
       <Grid container spacing={3}>
         <Grid item xs={12} sm={6} md={4}>
           {initiatePay.start ? (

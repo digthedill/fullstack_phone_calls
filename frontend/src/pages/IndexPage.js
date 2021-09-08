@@ -30,8 +30,4 @@ const Container = styled.div`
     max-width: 250px;
     margin: 0;
   }
-  /* 
-  @media (max-width: 700px) {
-    margin-top: 6rem;
-  } */
 `

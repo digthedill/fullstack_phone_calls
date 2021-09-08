@@ -15,7 +15,6 @@ const ContactElement = ({ contact, db, initPay }) => {
         .catch((e) => console.error(e))
     }
   }
-
   const handleCall = () => {
     initPay({
       start: true,

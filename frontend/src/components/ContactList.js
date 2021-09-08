@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import styled from "styled-components"
-import { useAuthState } from "react-firebase-hooks/auth"
 import { Typography } from "@material-ui/core"
+import { useAuthState } from "react-firebase-hooks/auth"
 
 import ContactElement from "./ContactElement"
 import { db, auth } from "../config/firebase"
@@ -13,7 +13,7 @@ const ContactList = ({ initPay }) => {
   useEffect(() => {
     const getUserContacts = async () => {
       db.collection("contacts")
-        //.orderBy("contactName") //not working in real time
+        //.orderBy("createdAt") //indexing not working in real time
         .where("uid", "==", user.uid)
         .onSnapshot((querySnapshot) => {
           setContacts([])
@@ -27,7 +27,7 @@ const ContactList = ({ initPay }) => {
         })
     }
     getUserContacts()
-    // unsubsribe to listener
+    // unsubsribe to listener cleanup func
     return () =>
       db.collection("contacts").where("uid", "==", user.uid).onSnapshot()
   }, [user.uid])

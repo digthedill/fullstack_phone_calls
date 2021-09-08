@@ -1,4 +1,3 @@
-import React from "react"
 import styled from "styled-components"
 import { Button, Grid, Typography } from "@material-ui/core"
 import PersonIcon from "@material-ui/icons/Person"

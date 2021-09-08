@@ -3,8 +3,6 @@ import styled from "styled-components"
 import CircularProgress from "@material-ui/core/CircularProgress"
 import { Typography } from "@material-ui/core"
 
-// center on screen
-
 const Loading = () => {
   return (
     <Container>

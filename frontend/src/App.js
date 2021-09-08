@@ -20,7 +20,6 @@ const App = () => {
   return (
     <Container>
       <Header user={user} />
-
       {user && user.uid ? <MainPage user={user} /> : <IndexPage />}
     </Container>
   )

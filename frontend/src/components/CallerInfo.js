@@ -4,6 +4,7 @@ import styled from "styled-components"
 
 const CallerInfo = ({ paymentSuccess, cancelPay, contactName }) => {
   const handleCancel = () => {
+    // resets the payment/call
     if (window.confirm("Are you sure you want to cancel your call?")) {
       cancelPay({
         start: false,

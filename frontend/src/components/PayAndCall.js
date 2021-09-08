@@ -3,14 +3,13 @@ import { useStripe, useElements, CardElement } from "@stripe/react-stripe-js"
 import { Button, Typography } from "@material-ui/core"
 import styled from "styled-components"
 
-import options from "../utils/stripeEleOptions"
-
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth } from "../config/firebase"
 
-// bloated api calls
+// bloated api calls/options
 import makeTwilioCall from "../utils/makeTwilioCall"
 import handlePayment from "../utils/handlePayment"
+import options from "../utils/stripeEleOptions"
 
 const PayAndCall = ({
   setPaymentSuccess,
@@ -36,11 +35,12 @@ const PayAndCall = ({
         setCardError(null)
       }
     }, 5000)
-    return () => subscribe
+    return () => clearTimeout(subscribe)
   }, [setCardError, cardError])
 
-  // payment success toggles credit card view and attempting call view
+  // paymentSuccess toggles credit card view and attempting call view
   return !paymentSuccess ? (
+    // Stripe Element View
     <Container>
       {cardError && (
         <Typography variant="caption" color="secondary">
@@ -77,6 +77,7 @@ const PayAndCall = ({
       </form>
     </Container>
   ) : (
+    // Making Call View
     <Container>
       {calling && !callError ? (
         <Typography variant="h4">"Placing Call. . . "</Typography>
